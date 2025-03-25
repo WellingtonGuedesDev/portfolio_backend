@@ -8,10 +8,11 @@ class ConnectDb {
         this.mongo_cs = mongo_cs;
     }
 
-    async Connect() {
+    async connect() {
         try {
             const dbResult = await mongoose.connect(process.env.MONGO_CS);
 
+            this.db = dbResult
             return dbResult;
         } catch (error) {
             return "Error ao conectar no db ", error;
