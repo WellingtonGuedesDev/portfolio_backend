@@ -1,6 +1,7 @@
 import sanitizeHtml from 'sanitize-html'
 
-const regexPermitida = /^[\p{L}0-9\s-]+$/u;
+const regexPermitida = /^[a-zA-Z0-9\s-ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÒÓÔÕÖÙÚÛÜàáâãäåçèéêëìíîïòóôõöùúûü.,!?;:]+$/i;
+const regexId = /^[0-9a-fA-F]{24}$/;
 
 export function validateCampo(value) {
     if (!regexPermitida.test(value)) {
@@ -25,4 +26,12 @@ export function validateArray(value) {
     return arraySanitize
 }
 
-export default { validateCampo, validateArray }
+export function validadeId(value) {
+    if (!regexId.test(value)) {
+        return null
+    }
+
+    return sanitizeHtml(value, { allowedTags: [], allowedAttributes: {} })
+}
+
+export default { validateCampo, validateArray, validadeId }

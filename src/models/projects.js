@@ -22,7 +22,49 @@ const projectSchema = new mongoose.Schema({
 
 const projects = mongoose.model("projects", projectSchema)
 
-function createProject(projectName, description, stack) {
+export async function readProject() {
+    const result = await projects.find({})
+
+    //console.log(result[0].id)
+    const parseResult = result.map((item) => {
+        const { id, projectName, description, stack } = item
+
+        return { id, projectName, description, stack }
+    })
+
+    return parseResult;
+}
+
+// export function getOneProject(id) {
+//     const project = projects.findById(id)
+//     .then(user => {
+//         console.log(user);
+
+//         return user
+//     })
+//     .catch(err => {
+//         console.log(err);
+//     });
+// }
+
+export function getOneProject(id) {
+    return projects.findById(id) // Retorna a Promise diretamente
+        .then(project => {
+            //console.log("projectThen========", project)
+
+            if (!project) {
+                return null
+            }
+
+            return project; // Retorna o projeto para o chamador
+        })
+        .catch(err => {
+            //console.log("projectErr========", err)
+            throw err; // Propaga o erro para o controlador
+        });
+}
+
+export function createProject(projectName, description, stack) {
     const newProject = new projects({ projectName: projectName, description: description, stack: stack })
     
     const result = newProject.save()
@@ -52,4 +94,4 @@ function createProject(projectName, description, stack) {
     return result;
 }
 
-export { createProject }
+export default { createProject, readProject, getOneProject }
