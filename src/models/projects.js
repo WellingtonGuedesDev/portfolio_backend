@@ -94,4 +94,21 @@ export function createProject(projectName, description, stack) {
     return result;
 }
 
-export default { createProject, readProject, getOneProject }
+export function updateProject(id, value) {
+    console.log('projects========', id, value)
+    const project = projects.findByIdAndUpdate("67e3685733feb22c6ae0e1bd", { projectName: "dasd" }, { new: true })
+    .then((result) => {
+        if (!result) {
+            console.log('if========project',result)
+            return null
+        }
+
+        console.log('project========',result)
+        return result
+    })
+    .catch((err) => {
+        return console.log(err)
+    })
+}
+
+export default { createProject, readProject, getOneProject, updateProject }

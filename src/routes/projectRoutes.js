@@ -32,6 +32,24 @@ projectRoutes.get('/getProject/:id', async (req, res) => {
     return res.status(project.status).json({ message: project.message, status: project.status })
 })
 
+projectRoutes.post('/updateProject', async (req, res) => {
+    const { id, valueUpdate } = req.body
+    console.log("router=========", id, valueUpdate)
+    // try {
+    //     id = validateId(id)
+    // } catch (error) {
+        
+    // }
+
+    const project = await projectController.updateProject(id, valueUpdate)
+
+    if (project.status === 404) {
+        res.status(project.status).json({ message: project.message, status: project.status })
+    }
+
+    return res.status(project.status).json({ message: project.message, status: project.status })
+})
+
 projectRoutes.post('/createProject', async (req, res) => {
     let { projectName, description, stack } = req.body
 

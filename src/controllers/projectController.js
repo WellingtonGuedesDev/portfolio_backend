@@ -1,4 +1,4 @@
-import { createProject, readProject, getOneProject } from "../models/projects.js";
+import { createProject, readProject, getOneProject, updateProject } from "../models/projects.js";
 
 export default class ProjectsController {
 
@@ -20,6 +20,18 @@ export default class ProjectsController {
             return { message: "Projeto não encontrado", status: 404 }
         }
 
+        return { message: project, status: 200 }
+    }
+
+    async updateProject(id, valueUpdate) {
+        const project = await updateProject(id, valueUpdate)
+
+        if (project === null) {
+            console.log('if========null',project)
+            return { message: "Projeto não encontrado!", status: 404 }
+        }
+
+        console.log('update==========',project)
         return { message: project, status: 200 }
     }
 
