@@ -15,7 +15,8 @@ class ConnectDb {
             this.db = dbResult
             return dbResult;
         } catch (error) {
-            return "Error ao conectar no db ", error;
+            console.log('projectCatch=====', error)
+            return null
         }
     }
 }

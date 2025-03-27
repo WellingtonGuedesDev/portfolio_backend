@@ -2,21 +2,21 @@ import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
     projectName: {
-      type: String,
-      required: [true, "Nome do projeto é obrigatorio"],
-      unique: [true, "Ja existe um projeto com esse nome"],
-      minlength: [2, "Nome do projeto deve ter pelo menos 2 caracteres"],
-      maxlength: [30, "Nome do projeto deve ter no maximo 30 caracteres"]
+        type: String,
+        required: [true, "Nome do projeto é obrigatorio"],
+        unique: [true, "Ja existe um projeto com esse nome"],
+        minlength: [2, "Nome do projeto deve ter pelo menos 2 caracteres"],
+        maxlength: [30, "Nome do projeto deve ter no maximo 30 caracteres"]
     },
     description: {
-      type: String,
-      required: [true, "Descrição é obrigatorio"],
-      minlength: [2, "Descrição deve ter no minimo 10 caracteres"],
-      maxlength: [300, "Descrição deve ter no maximo 300 caracteres"]
+        type: String,
+        required: [true, "Descrição é obrigatorio"],
+        minlength: [2, "Descrição deve ter no minimo 10 caracteres"],
+        maxlength: [300, "Descrição deve ter no maximo 300 caracteres"]
     },
     stack: {
-      type: Array,
-      required: [true, "Informe pelo menos uma stack"],
+        type: Array,
+        required: [true, "Informe pelo menos uma stack"],
     },
 });
 
@@ -24,6 +24,8 @@ const projects = mongoose.model("projects", projectSchema)
 
 export async function readProject() {
     const result = await projects.find({})
+
+    console.log(result)
 
     //console.log(result[0].id)
     const parseResult = result.map((item) => {
@@ -66,49 +68,60 @@ export function getOneProject(id) {
 
 export function createProject(projectName, description, stack) {
     const newProject = new projects({ projectName: projectName, description: description, stack: stack })
-    
+
     const result = newProject.save()
-    .then(() => {
-        return { message:  "Projeto criado com sucesso"}
-    })
-    .catch((err) => {
-        //const requiredError = err.errors.projectName.properties.message
-        //console.log("teste========", err.errors.description.properties.message)
+        .then(() => {
+            return { message: "Projeto criado com sucesso" }
+        })
+        .catch((err) => {
+            //const requiredError = err.errors.projectName.properties.message
+            //console.log("teste========", err.errors.description.properties.message)
 
-        if (err?.cause?.errorResponse?.code) {
-            console.log("projeto ja existe")
-            return { message: "Projeto ja existe", status: "error" }
-        }
+            if (err?.cause?.errorResponse?.code) {
+                console.log("projeto ja existe")
+                return { message: "Projeto ja existe", status: "error" }
+            }
 
-        if (err?.errors?.projectName?.properties?.message) {
-            console.log("Erro generico")
-            return { message: err.errors.projectName.properties.message, status: "error" }
-        }
+            if (err?.errors?.projectName?.properties?.message) {
+                console.log("Erro generico")
+                return { message: err.errors.projectName.properties.message, status: "error" }
+            }
 
-        if (err?.errors?.description?.properties?.message) {
-            console.log("Erro generico")
-            return { message: err.errors.description.properties.message, status: "error" }
-        }
-    })
+            if (err?.errors?.description?.properties?.message) {
+                console.log("Erro generico")
+                return { message: err.errors.description.properties.message, status: "error" }
+            }
+        })
 
     return result;
 }
 
-export function updateProject(id, value) {
-    console.log('projects========', id, value)
-    const project = projects.findByIdAndUpdate("67e3685733feb22c6ae0e1bd", { projectName: "dasd" }, { new: true })
-    .then((result) => {
+export async function updateProject(id, value) {
+    //console.log('projects========', value)
+    // const project = projects.findByIdAndUpdate(id, { projectName: value.name, description: value.description, stack: value.stack }, { new: true })
+    // .then((result) => {
+    //     if (!result) {
+    //         console.log('if========project',result)
+    //         return null
+    //     }
+    //     return result
+    // })
+    // .catch((err) => {
+    //     return err
+    // })
+
+    try {
+        const result = await projects.findByIdAndUpdate(id, { projectName: value.name, description: value.description, stack: value.stack }, { new: true })
+
         if (!result) {
-            console.log('if========project',result)
-            return null
+            return { message: "Projeto não encontrado", status: 404 };
         }
 
-        console.log('project========',result)
-        return result
-    })
-    .catch((err) => {
-        return console.log(err)
-    })
+        return { message: "Projeto atualizado com sucesso", status: 200 };
+    } catch (err) {
+        console.error('Erro ao atualizar projeto:', err.message);
+        return { message: "Projeto não encontrado", status: 404 };
+    }
 }
 
 export default { createProject, readProject, getOneProject, updateProject }

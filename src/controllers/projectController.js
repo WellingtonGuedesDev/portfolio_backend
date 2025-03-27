@@ -25,14 +25,15 @@ export default class ProjectsController {
 
     async updateProject(id, valueUpdate) {
         const project = await updateProject(id, valueUpdate)
+        console.log("controllerTEste========", project)
 
-        if (project === null) {
-            console.log('if========null',project)
-            return { message: "Projeto não encontrado!", status: 404 }
+        if (project.status === 404) {
+            console.error('if========null',project)
+            return { message: project.message, status: project.status }
         }
 
         console.log('update==========',project)
-        return { message: project, status: 200 }
+        return { message: project.message, status: project.status }
     }
 
     async createProject(projectName, description, stack) {
